@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using FilmesApi.Data.DTOS;
+using FilmesApi.Data.DTOS.Cinema;
 using FilmesApi.Models;
 
 namespace FilmesApi.Profiles
@@ -10,7 +10,7 @@ namespace FilmesApi.Profiles
         {
             CreateMap<CreateCinemaDTO, Cinema>();
             CreateMap<Cinema, ReadCinemaDTO>()
-                .ForMember(cinemaDto => cinemaDto.ReadEnderecoDTO, opt => opt.MapFrom(cinema => cinema.Endereco))
+                .ForMember(cinemaDto => cinemaDto.Endereco, opt => opt.MapFrom(cinema => cinema.Endereco))
                 .ForMember(cinemaDto => cinemaDto.Sessoes, opt => opt.MapFrom(cinema => cinema.Sessoes));
             CreateMap<UpdateCinemaDTO, Cinema>();
         }

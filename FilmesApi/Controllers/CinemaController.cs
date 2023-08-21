@@ -1,8 +1,7 @@
-﻿using AutoMapper;
-using FilmesApi.Data.DTOS;
-using FilmesApi.Data; 
+﻿using Microsoft.AspNetCore.Mvc;
+using FilmesApi.Service;
 using FilmesApi.Models;
-using Microsoft.AspNetCore.Mvc;
+using FilmesApi.Data.DTOS.Cinema;
 
 namespace FilmesApi.Controllers
 {
@@ -11,68 +10,44 @@ namespace FilmesApi.Controllers
 
     public class CinemaController : ControllerBase
     {
-        private FilmeContext _context;
-        private IMapper _mapper;
+        
+        private readonly CinemaService _cinemaService;
+        
 
-        public CinemaController(FilmeContext context, IMapper mapper)
+        public CinemaController(CinemaService cinemaService)
         {
-            _context = context;
-            _mapper = mapper;
+            _cinemaService = cinemaService;
         }
 
-
         [HttpPost]
-        public IActionResult AdicionaCinema([FromBody] CreateCinemaDTO cinemaDto)
+        public IActionResult CreateCinema([FromBody] CreateCinemaDTO cinemaDto)
         {
-            Cinema cinema = _mapper.Map<Cinema>(cinemaDto);
-            _context.Cinemas.Add(cinema);
-            _context.SaveChanges();
-            return CreatedAtAction(nameof(RecuperaCinemasPorId), new { id = cinema.Id }, cinemaDto);
+            return CreatedAtAction(nameof(FindAllCinema), _cinemaService.CreateCinema(cinemaDto));
         }
 
         [HttpGet]
-        public IEnumerable<ReadCinemaDTO> RecuperaCinemas()
+        public List<ReadCinemaDTO> FindAllCinema()
         {
-            return _mapper.Map<List<ReadCinemaDTO>>(_context.Cinemas.ToList());
+            return _cinemaService.FindAll();
         }
 
         [HttpGet("{id}")]
-        public IActionResult RecuperaCinemasPorId(int id)
+        public IActionResult findId(int id)
         {
-            Cinema cinema = _context.Cinemas.FirstOrDefault(cinema => cinema.Id == id);
-            if (cinema != null)
-            {
-                ReadCinemaDTO cinemaDto = _mapper.Map<ReadCinemaDTO>(cinema);
-                return Ok(cinemaDto);
-            }
-            return NotFound();
+            return Ok(_cinemaService.FindId(id));
         }
 
         [HttpPut("{id}")]
-        public IActionResult AtualizaCinema(int id, [FromBody] UpdateCinemaDTO cinemaDto)
+        public IActionResult UpdateCinema(int id, [FromBody] UpdateCinemaDTO cinemaDto)
         {
-            Cinema cinema = _context.Cinemas.FirstOrDefault(cinema => cinema.Id == id);
-            if (cinema == null)
-            {
-                return NotFound();
-            }
-            _mapper.Map(cinemaDto, cinema);
-            _context.SaveChanges();
-            return NoContent();
+            return Ok(_cinemaService.UpdateCinema(id, cinemaDto));
         }
 
 
         [HttpDelete("{id}")]
-        public IActionResult DeletaCinema(int id)
+        public IActionResult DeleteCinema(int id)
         {
-            Cinema cinema = _context.Cinemas.FirstOrDefault(cinema => cinema.Id == id);
-            if (cinema == null)
-            {
-                return NotFound();
-            }
-            _context.Remove(cinema);
-            _context.SaveChanges();
-            return NoContent();
+            return Ok(_cinemaService.DeleteCinema(id));
         }
 
     }

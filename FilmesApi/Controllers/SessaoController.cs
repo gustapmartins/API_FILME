@@ -1,50 +1,35 @@
-﻿using AutoMapper;
-using FilmesApi.Data;
-using FilmesApi.Models;
-using Microsoft.AspNetCore.Mvc;
-using FilmesApi.Data.DTOS;
+﻿using Microsoft.AspNetCore.Mvc;
+using FilmesApi.Data.DTOS.Sessao;
+using FilmesApi.Service;
 
-namespace FilmesApi.Controllers
+namespace FilmesApi.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class SessaoController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class SessaoController : ControllerBase
+    private readonly SessaoService _sessaoService;
+
+    private SessaoController(SessaoService sessaoService)
     {
-        private FilmeContext _context;
-        private IMapper _mapper;
+        _sessaoService = sessaoService;
+    }
 
-        public SessaoController(FilmeContext context, IMapper mapper)
-        {
-            _context = context;
-            _mapper = mapper;
-        }
+    [HttpGet]
+    public IActionResult FindAllSessoes()
+    {
+        return Ok(_sessaoService.FindAllSessoes());
+    }
+    
+    [HttpPost]
+    public IActionResult CreateSessao(CreateSessaoDTO createDto)
+    {
+        return CreatedAtAction(nameof(FindIdSessoes), _sessaoService.CreateSessao(createDto));
+    }
 
-        [HttpPost]
-        public IActionResult AdicionaSessao(CreateSessaoDTO dto)
-        {
-            Sessao sessao = _mapper.Map<Sessao>(dto);
-            _context.Sessoes.Add(sessao);
-            _context.SaveChanges();
-            return CreatedAtAction(nameof(RecuperaSessoesPorId), new { filmeId = sessao.FilmeId, cinemaId = sessao.CinemaId }, sessao);
-        }
-
-        [HttpGet]
-        public IEnumerable<ReadSessaoDTO> RecuperaSessoes()
-        {
-            return _mapper.Map<List<ReadSessaoDTO>>(_context.Sessoes.ToList());
-        }
-
-        [HttpGet("{filmeId}/{cinemaId}")]
-        public IActionResult RecuperaSessoesPorId(int filmeId, int cinemaId)
-        {
-            Sessao sessao = _context.Sessoes.FirstOrDefault(sessao => sessao.FilmeId == filmeId && sessao.CinemaId == cinemaId);
-            if (sessao != null)
-            {
-                ReadSessaoDTO sessaoDto = _mapper.Map<ReadSessaoDTO>(sessao);
-
-                return Ok(sessaoDto);
-            }
-            return NotFound();
-        }
+    [HttpGet("{filmeId}/{cinemaId}")]
+    public IActionResult FindIdSessoes(int filmeId, int cinemaId)
+    {
+        return Ok(_sessaoService.FindIdSessoes(filmeId, cinemaId));
     }
 }

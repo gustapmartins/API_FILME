@@ -1,6 +1,8 @@
 using FilmesApi.Data;
+using FilmesApi.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using ProductStore.Filters;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +14,16 @@ builder.Services.AddDbContext<FilmeContext>(opts =>
                   ServerVersion.AutoDetect(connectionString)));
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddScoped<CinemaService>();
+builder.Services.AddScoped<FilmeService>();
+builder.Services.AddScoped<EnderecoService>();
+builder.Services.AddScoped<SessaoService>();
+
+builder.Services.AddControllers(opts =>
+{
+    opts.Filters.Add<NotImplExceptionFilterAttribute>();
+});
 
 // Add services to the container.
 

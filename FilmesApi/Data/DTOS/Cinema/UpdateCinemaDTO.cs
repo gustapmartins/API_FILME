@@ -1,4 +1,4 @@
-﻿namespace FilmesApi.Data.DTOS
+﻿namespace FilmesApi.Data.DTOS.Cinema
 {
     public class UpdateCinemaDTO
     {

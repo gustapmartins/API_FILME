@@ -1,6 +1,7 @@
-﻿using FilmesApi.Models;
+﻿using FilmesApi.Data.DTOS.Sessao;
+using FilmesApi.Models;
 
-namespace FilmesApi.Data.DTOS;
+namespace FilmesApi.Data.DTOS.Filme;
 
 public class ReadFilmeDTO
 {
